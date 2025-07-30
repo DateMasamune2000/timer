@@ -5,6 +5,7 @@ from time import sleep
 
 import rich
 from rich.progress import track
+from rich.prompt import Prompt
 
 class CmdSyntaxErr(Exception):
     pass
@@ -18,13 +19,19 @@ elif len(sys.argv) == 2:
         slpmins = int(sys.argv[1])
     except ValueError as e:
         raise CmdSyntaxErr('Argument must be an integer') from e
+else:
+    slpmins = int(Prompt.ask(
+        '[bold blue]Enter the interval in minutes[/bold blue] [italic yellow](default 25)[/italic yellow]',
+        default=25))
 
 rich.print(
         f'[bold]*** [yellow]Starting timer for {slpmins} minutes[/yellow] ***[/bold]',
         )
 
-for i in track(range(slpmins*60), description="Timer running..."):
+for i in track(range(slpmins*60), description='Timer running...'):
     sleep(1);
 
 rich.print('[bold green]Time is up![/bold green]')
+
+os.system('mpv ' + os.getenv('HOME') + '/.config/timer/ring.mp3')
 
